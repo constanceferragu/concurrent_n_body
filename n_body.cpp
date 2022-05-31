@@ -8,6 +8,7 @@
 #include <string>
 #include <thread>
 #include <vector>
+#include <math.h>
 
 const double GRAVITY = 0.000000000066742;
 
@@ -20,12 +21,20 @@ public:
     double initial_v_y;
     std::mutex lock;
 
-    Body(double x, double y, double mass) {
+    Body(){
+        this->x = 0.0;
+        this->y = 0.0;
+        this->mass = 0.0;
+        this->initial_v_x = 0.0;
+        this->initial_v_y = 0.0;
+    }
+
+    Body(double x, double y, double mass, double v_x, double v_y) {
         this->x = x;
         this->y = y;
         this->mass = mass;
-        this->initial_v_x = 0.0;
-        this->initial_v_y = 0.0;
+        this->initial_v_x = v_x;
+        this->initial_v_y = v_y;
     }
     
     double get_force(Body* b_1, Body* b_2);
