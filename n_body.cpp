@@ -19,7 +19,7 @@ public:
     double y;
     double initial_v_x;
     double initial_v_y;
-    std::mutex lock;
+    // std::mutex lock;
 
     Body(){
         this->x = 0.0;
@@ -36,8 +36,11 @@ public:
         this->initial_v_x = v_x;
         this->initial_v_y = v_y;
     }
-    
-    double get_force(Body* b_1, Body* b_2);
+    ~Body(); 
+    // I think it makes more sense to have the get_force function
+    //    a standalone function. - Siggi
+    // double get_force(Body* b_1, Body* b_2);
+    void print();
 };
 
 Body::~Body() {
@@ -50,7 +53,7 @@ std::vector<Body> generate_random_bodies(int num_bodies){
     //      velocities are between 0 and 10 
     std::vector<Body> bodies;
     double m,x,y,v_x, v_y;
-    Body rand_body; 
+    // Body rand_body; 
 
     for (int i=0; i<num_bodies; i++){
         m = 100 * (rand() / double(RAND_MAX)) ;
@@ -58,13 +61,29 @@ std::vector<Body> generate_random_bodies(int num_bodies){
         y = (rand() / double(RAND_MAX)) ;
         v_x = 10 * (rand() / double(RAND_MAX)) ;
         v_y = 10 * (rand() / double(RAND_MAX)) ;
-        rand_body = Body(x,y,m, v_x,v_y); 
+        Body rand_body(x,y,m, v_x,v_y); 
         bodies.push_back(rand_body); 
     }
     return bodies; 
 }
 
-double Body::get_force(Body* b_1, Body* b_2){
+// double Body::get_force(Body* b_1, Body* b_2){
+//     double dist = pow( b_1->x - b_2->x , 2) + pow(b_1->y - b_2->y , 2);
+//     return (GRAVITY * b_1->mass * b_2->mass)/dist;
+// }
+
+void Body::print(){
+    // For debugging purposes we print the characteristics of a body
+    std::cout<<"---Body---"<<std::endl;
+    std::cout<<"  mass: "<<this->mass<<std::endl;
+    std::cout<<"  x   : "<<this->x<<std::endl;
+    std::cout<<"  y   : "<<this->y<<std::endl;
+    std::cout<<"  v_x : "<<this->initial_v_x<<std::endl;
+    std::cout<<"  v_y : "<<this->initial_v_y<<std::endl;
+    std::cout<<"----------"<<std::endl;
+}
+
+double get_force(Body* b_1, Body* b_2){
     double dist = pow( b_1->x - b_2->x , 2) + pow(b_1->y - b_2->y , 2);
     return (GRAVITY * b_1->mass * b_2->mass)/dist;
 }
