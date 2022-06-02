@@ -19,7 +19,7 @@ public:
     double y;
     double initial_v_x;
     double initial_v_y;
-    // std::mutex lock;
+    // std::mutex lock; commented because was giving me bugs
 
     Body(){
         this->x = 0.0;
