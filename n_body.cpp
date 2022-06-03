@@ -97,3 +97,18 @@ double get_force(Body* b_1, Body* b_2){
     double dist = pow( b_1->x - b_2->x , 2) + pow(b_1->y - b_2->y , 2);
     return (GRAVITY * b_1->mass * b_2->mass)/dist;
 }
+
+void visualise_bodies(std::vector<Body> bodies){
+
+    for (int i = 0;i<21;i++){
+        if (i%10 == 0){
+            std::cout<<1-i/10<<" +";
+        } else {
+            std::cout<<"  +";
+        }
+        for (int j = 0;j<21;j++){
+            std::cout<<"  "; 
+        }
+        std::cout<<"+"<<std::endl;
+    }
+}

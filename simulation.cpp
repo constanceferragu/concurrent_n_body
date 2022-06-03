@@ -1,8 +1,8 @@
 #include "n_body.cpp"
 #define dt 1. // Let's say that dt, our time step, is 1 day
-#define MAX_TIME 5. // Let's say that we want to simulate one month, or approx. 28 days
+#define MAX_TIME 28. // Let's say that we want to simulate one month, or approx. 28 days
 // #define PRINT_FORCE_MATRIX
-#define PRINT_POSITIONS
+// #define PRINT_POSITIONS
 
 int main(){
     int N = 2;
@@ -19,6 +19,10 @@ int main(){
     }
     #endif
     double time = 0;
+
+    visualise_bodies(bodies); 
+    return 0; 
+
     while (time<MAX_TIME){
         // First we compute the forces between all of the bodies 
         for (int i = 0; i<N; i++){
