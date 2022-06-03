@@ -1,6 +1,6 @@
 #include "n_body.cpp"
 #define dt 1. // Let's say that dt, our time step, is 1 day
-#define MAX_TIME 1. // Let's say that we want to simulate one month, or approx. 28 days
+#define MAX_TIME 5. // Let's say that we want to simulate one month, or approx. 28 days
 #define PRINT_FORCE_MATRIX
 #define PRINT_POSITIONS
 
