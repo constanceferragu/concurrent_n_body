@@ -67,6 +67,13 @@ std::vector<Body> generate_random_bodies(int num_bodies){
     return bodies; 
 }
 
+std::vector<Body> generate_earth_moon(){
+    Body earth(0,0, 80, 0,0); // Earth is not moving and in the center. Its mass is 80 times that of the moon
+    Body moon(1.,0, 1, 0,-12.8); // Moon's starting position is at (1,0), i.e. to the right of the earth. It has 0 x velocity and -12.8 y velocity
+    std::vector<Body> bodies{earth, moon};
+    return bodies; 
+}
+
 // double Body::get_force(Body* b_1, Body* b_2){
 //     double dist = pow( b_1->x - b_2->x , 2) + pow(b_1->y - b_2->y , 2);
 //     return (GRAVITY * b_1->mass * b_2->mass)/dist;
@@ -84,6 +91,9 @@ void Body::print(){
 }
 
 double get_force(Body* b_1, Body* b_2){
+    // IDEA: could it be good to let this function return the x and y components
+    //          of the force instead of just the total force? We need to compute
+    //          those at some point anyway. 
     double dist = pow( b_1->x - b_2->x , 2) + pow(b_1->y - b_2->y , 2);
     return (GRAVITY * b_1->mass * b_2->mass)/dist;
 }
