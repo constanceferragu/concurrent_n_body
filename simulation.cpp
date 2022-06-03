@@ -1,27 +1,27 @@
 #include "n_body.cpp"
 #define dt 1. // Let's say that dt, our time step, is 1 day
-#define MAX_TIME 28. // Let's say that we want to simulate one month, or approx. 28 days
-// #define PRINT_FORCE_MATRIX
-// #define PRINT_POSITIONS
+#define MAX_TIME 1. // Let's say that we want to simulate one month, or approx. 28 days
+#define PRINT_FORCE_MATRIX
+#define PRINT_POSITIONS
 
 int main(){
-    int N = 2;
-    double force_matrix[N][N]; 
     Body *B_i, *B_j; 
     double force_ij; 
     
+    int N = 2;
     // std::vector<Body> bodies = generate_random_bodies(N);
     std::vector<Body> bodies = generate_earth_moon();
+    double force_matrix[N][N]; 
+
     #ifdef PRINT_POSITIONS
     std::cout<<"Initial positions:"<<std::endl; 
     for (int i = 0; i<N; i++){
         bodies[i].print();
     }
+    visualise_bodies(bodies); 
     #endif
     double time = 0;
 
-    visualise_bodies(bodies); 
-    return 0; 
 
     while (time<MAX_TIME){
         // First we compute the forces between all of the bodies 
@@ -50,7 +50,7 @@ int main(){
         }
         std::cout<<"------"<<std::endl; 
         #endif
-        // Now we have computed the forces between all the bodies and stored them in a matrix
+        // Now we have computed the MAGNITUED of the forces between all the bodies and stored them in a matrix
         // Time to update the positions and velocities.
         // For simplicities sake, I have this in two for loops, obviously we are looping over
         // the same stuff twice so we should move this into a single loop later. 
@@ -66,7 +66,7 @@ int main(){
                 B_j = &bodies[j]; 
                 double x_force,y_force; 
                 double adj, opp, hyp; // trigonometry beurk
-                adj = B_i->x - B_j->x;
+                adj = -(B_i->x - B_j->x);
                 opp = B_i->y - B_j->y; 
                 hyp = sqrt(pow(adj,2)+pow(opp,2));
                 force_ij = force_matrix[i][j]; 
@@ -92,8 +92,17 @@ int main(){
             x_acc = total_x_force/B_i->mass; 
             y_acc = total_y_force/B_i->mass; 
             // displacement = v0*t + 0.5*acc*t^2
+            #ifdef PRINT_FORCE_MATRIX
+            std::cout<<"before x is, for body "<<i<<": "<<B_i->x<<std::endl;
+            std::cout<<"changes by "<<i<<": "<<B_i->initial_v_x*dt + 0.5*x_acc*pow(dt,2)<<std::endl;
+            std::cout<<"after x should be, for body "<<i<<": "<<B_i->x + B_i->initial_v_x*dt + 0.5*x_acc*pow(dt,2)<<std::endl;
+            #endif
             B_i->x += B_i->initial_v_x*dt + 0.5*x_acc*pow(dt,2);
             B_i->y += B_i->initial_v_y*dt + 0.5*y_acc*pow(dt,2);
+            #ifdef PRINT_FORCE_MATRIX
+            std::cout<<"new x for body "<<i<<": "<<B_i->x<<std::endl;
+            std::cout<<"new y for body "<<i<<": "<<B_i->y<<std::endl;
+            #endif
             // velocity = v0 + t*acc
             B_i->initial_v_x += dt*x_acc;
             B_i->initial_v_y += dt*y_acc; 
@@ -107,6 +116,7 @@ int main(){
     for (int i = 0; i<N; i++){
         bodies[i].print();
     }
+    visualise_bodies(bodies); 
     #endif 
 
 
