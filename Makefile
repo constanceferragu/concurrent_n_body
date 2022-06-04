@@ -15,7 +15,7 @@ CFLAGS = -pthread -std=c++11 -Wall
 # 	$(CXX) -c $(CFLAGS) -o grading.o grading/grading.cpp -I.
 
 main.o: simulation.cpp 
-	$(CXX) $(CFLAGS) simulation.cpp
+	$(CXX) $(CFLAGS) simulation.cpp -o simulation
 
 clean:
 	rm -f *.o
