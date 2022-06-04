@@ -14,11 +14,12 @@ const double GRAVITY = 0.000000000066742;
 
 class Body {
 public:
-    double mass;
+    
     double x;
     double y;
+    double mass; //kg
     double initial_v_x;
-    double initial_v_y;
+    double initial_v_y; //velocity magnitude in m/s
     // std::mutex lock; commented because was giving me bugs
 
     Body(){
@@ -97,8 +98,9 @@ std::vector<Body> generate_random_bodies(int num_bodies){
 }
 
 std::vector<Body> generate_earth_moon(){
-    Body earth(0,0, 8e7, 0,0); // Earth is not moving and in the center. Its mass is 80 times that of the moon
-    Body moon(1.,0, 1e6, 0,-.024); // Moon's starting position is at (1,0), i.e. to the right of the earth. It has 0 x velocity and -12.8 y velocity
+    
+    Body earth(0, 0, 5.972e24, 0, 0); // Earth is not moving and in the center. Its mass is 80 times that of the moon
+    Body moon(1., 0, 7.348e22, 0, -29786); // Moon's starting position is at (1,0), i.e. to the right of the earth. It has 0 x velocity and -12.8 y velocity
     std::vector<Body> bodies{earth, moon};
     return bodies; 
 }
@@ -118,6 +120,20 @@ double get_force(Body* b_1, Body* b_2){
     return (GRAVITY * b_1->mass * b_2->mass)/dist;
 }
 
+
+// maybe
+// double get_force_x(Body* b_1, Body* b_2){
+    
+
+// }
+
+// double get_force_y(Body* b_1, Body* b_2){
+
+
+// }
+
+
+// printing
 void visualise_bodies(std::vector<Body> bodies){
     std::vector<int> xcoords, ycoords; 
     double x_max = 0. ,y_max = 0. ; 
@@ -127,8 +143,6 @@ void visualise_bodies(std::vector<Body> bodies){
         xcoords.push_back((int) round(10*bodies[i].x) );
         ycoords.push_back((int) round(10*bodies[i].y) );
     }
-
-
 
     // The top border
     std::cout<<"   "; 
