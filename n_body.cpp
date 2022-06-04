@@ -41,11 +41,40 @@ public:
     //    a standalone function. - Siggi
     // double get_force(Body* b_1, Body* b_2);
     void print();
+    void apply_force(double x_force, double y_force, double dt);
 };
 
 Body::~Body() {
 }
 
+void Body::apply_force(double x_force, double y_force, double dt){
+    // Takes two force vectors and updates both position
+    // and velocity of the Body.
+
+    // first we need the acceleration in each direction
+    double x_acc = x_force/this->mass;
+    double y_acc = y_force/this->mass;
+
+    // displacement = v0*t + 0.5*acc*t^2
+    this->x += this->initial_v_x*dt + 0.5*x_acc*pow(dt,2);
+    this->y += this->initial_v_y*dt + 0.5*y_acc*pow(dt,2);
+
+    // velocity = v0 + t*acc
+    this->initial_v_x += dt*x_acc;
+    this->initial_v_y += dt*y_acc; 
+
+}
+
+void Body::print(){
+    // For debugging purposes we print the characteristics of a body
+    std::cout<<"---Body---"<<std::endl;
+    std::cout<<"  mass: "<<this->mass<<std::endl;
+    std::cout<<"  x   : "<<this->x<<std::endl;
+    std::cout<<"  y   : "<<this->y<<std::endl;
+    std::cout<<"  v_x : "<<this->initial_v_x<<std::endl;
+    std::cout<<"  v_y : "<<this->initial_v_y<<std::endl;
+    std::cout<<"----------"<<std::endl;
+}
 std::vector<Body> generate_random_bodies(int num_bodies){
     // For the moment, these are the boundaries:
     //      mass is between 0 and 100
@@ -68,8 +97,8 @@ std::vector<Body> generate_random_bodies(int num_bodies){
 }
 
 std::vector<Body> generate_earth_moon(){
-    Body earth(0,0, 80, 0,0); // Earth is not moving and in the center. Its mass is 80 times that of the moon
-    Body moon(1.,0, 1, 0,-.128); // Moon's starting position is at (1,0), i.e. to the right of the earth. It has 0 x velocity and -12.8 y velocity
+    Body earth(0,0, 8e7, 0,0); // Earth is not moving and in the center. Its mass is 80 times that of the moon
+    Body moon(1.,0, 1e6, 0,-.024); // Moon's starting position is at (1,0), i.e. to the right of the earth. It has 0 x velocity and -12.8 y velocity
     std::vector<Body> bodies{earth, moon};
     return bodies; 
 }
@@ -79,16 +108,7 @@ std::vector<Body> generate_earth_moon(){
 //     return (GRAVITY * b_1->mass * b_2->mass)/dist;
 // }
 
-void Body::print(){
-    // For debugging purposes we print the characteristics of a body
-    std::cout<<"---Body---"<<std::endl;
-    std::cout<<"  mass: "<<this->mass<<std::endl;
-    std::cout<<"  x   : "<<this->x<<std::endl;
-    std::cout<<"  y   : "<<this->y<<std::endl;
-    std::cout<<"  v_x : "<<this->initial_v_x<<std::endl;
-    std::cout<<"  v_y : "<<this->initial_v_y<<std::endl;
-    std::cout<<"----------"<<std::endl;
-}
+
 
 double get_force(Body* b_1, Body* b_2){
     // IDEA: could it be good to let this function return the x and y components

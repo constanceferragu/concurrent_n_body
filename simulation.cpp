@@ -1,8 +1,9 @@
 #include "n_body.cpp"
 #define dt 1. // Let's say that dt, our time step, is 1 day
-#define MAX_TIME 5. // Let's say that we want to simulate one month, or approx. 28 days
-#define PRINT_FORCE_MATRIX
+#define MAX_TIME 10. // Let's say that we want to simulate one month, or approx. 28 days
+// #define PRINT_FORCE_MATRIX
 #define PRINT_POSITIONS
+// #define PRINT_BEFORE_AFTER_APPLY_FORCE
 
 int main(){
     Body *B_i, *B_j; 
@@ -50,10 +51,9 @@ int main(){
         }
         std::cout<<"------"<<std::endl; 
         #endif
-        // Now we have computed the MAGNITUED of the forces between all the bodies and stored them in a matrix
+        // Now we have computed the MAGNITUDE of the forces between all the bodies 
+        //    and stored them in a matrix
         // Time to update the positions and velocities.
-        // For simplicities sake, I have this in two for loops, obviously we are looping over
-        // the same stuff twice so we should move this into a single loop later. 
         for (int i = 0; i<N; i++){
             B_i = &bodies[i]; 
             double total_x_force = 0.;
@@ -86,26 +86,19 @@ int main(){
             std::cout<<"total y force on body "<<i<<": "<<total_y_force<<std::endl;
             #endif
 
-            // Here, we have the total x force and y force, time to update the position and velocity.
-            double x_acc, y_acc; 
-            // acceleration = Force / mass
-            x_acc = total_x_force/B_i->mass; 
-            y_acc = total_y_force/B_i->mass; 
-            // displacement = v0*t + 0.5*acc*t^2
-            #ifdef PRINT_FORCE_MATRIX
-            std::cout<<"before x is, for body "<<i<<": "<<B_i->x<<std::endl;
-            std::cout<<"changes by "<<i<<": "<<B_i->initial_v_x*dt + 0.5*x_acc*pow(dt,2)<<std::endl;
-            std::cout<<"after x should be, for body "<<i<<": "<<B_i->x + B_i->initial_v_x*dt + 0.5*x_acc*pow(dt,2)<<std::endl;
+            // Here, we have the total x force and y force, 
+            // time to update the position and velocity
+            // by calling the body's apply_force function
+            #ifdef PRINT_BEFORE_AFTER_APPLY_FORCE
+            std::cout<<"-----------Body "<<i<<"----------"<<std::endl;
+            std::cout<<"before applying forces"<<std::endl;
             #endif
-            B_i->x += B_i->initial_v_x*dt + 0.5*x_acc*pow(dt,2);
-            B_i->y += B_i->initial_v_y*dt + 0.5*y_acc*pow(dt,2);
-            #ifdef PRINT_FORCE_MATRIX
-            std::cout<<"new x for body "<<i<<": "<<B_i->x<<std::endl;
-            std::cout<<"new y for body "<<i<<": "<<B_i->y<<std::endl;
+            B_i->print();
+            B_i->apply_force(total_x_force, total_y_force, dt); 
+            #ifdef PRINT_BEFORE_AFTER_APPLY_FORCE
+            std::cout<<"after applying forces"<<std::endl;
+            B_i->print();
             #endif
-            // velocity = v0 + t*acc
-            B_i->initial_v_x += dt*x_acc;
-            B_i->initial_v_y += dt*y_acc; 
 
             // now we have sucessfully updated the position of B_i
         }
