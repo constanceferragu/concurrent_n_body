@@ -100,7 +100,7 @@ std::vector<Body> generate_random_bodies(int num_bodies){
 std::vector<Body> generate_earth_moon(){
     
     Body earth(0, 0, 5.972e24, 0, 0); // Earth is not moving and in the center. Its mass is 80 times that of the moon
-    Body moon(1., 0, 7.348e22, 0, -29786); // Moon's starting position is at (1,0), i.e. to the right of the earth. It has 0 x velocity and -12.8 y velocity
+    Body moon(3.844e8, 0, 7.348e22, 0, -29786.); // Moon's starting position is at (1,0), i.e. to the right of the earth. It has 0 x velocity and -12.8 y velocity
     std::vector<Body> bodies{earth, moon};
     return bodies; 
 }
@@ -138,15 +138,27 @@ void visualise_bodies(std::vector<Body> bodies){
     std::vector<int> xcoords, ycoords; 
     double x_max = 0. ,y_max = 0. ; 
     for (size_t i=0; i<bodies.size(); i++){
-        // bodies[i].x is in [-1,1], we want it rounded to an integer in [-10, 10]
-        // bodies[i].x is in [-X_max,X_max], we want it rounded to an integer in [-10, 10]
-        xcoords.push_back((int) round(10*bodies[i].x) );
-        ycoords.push_back((int) round(10*bodies[i].y) );
+        if (abs(bodies[i].x)>x_max){
+            x_max = abs(bodies[i].x); 
+        }
+        if (abs(bodies[i].y)>y_max) {
+            x_max = abs(bodies[i].x); 
+        }
     }
+    double normalise_val = 1.1*3.844e8; // We normalise by a value that is slightly larger 
+    // double normalise_val = 1.1*std::max(x_max,y_max); // We normalise by a value that is slightly larger 
+    for (size_t i=0; i<bodies.size(); i++){
+        // bodies[i].x is in [-X_max,X_max], we want it rounded to an integer in [-10, 10]
+        double new_x, new_y;
+        new_x = bodies[i].x/normalise_val;
+        new_y = bodies[i].y/normalise_val;
+        xcoords.push_back((int) round(10*new_x));
+        ycoords.push_back((int) round(10*new_y));
 
+    }
     // The top border
     std::cout<<"   "; 
-    for (int j = 0;j<21;j++){
+    for (int j = 0;j<22;j++){
         std::cout<<"+ "; 
     }
     std::cout<<"+"<<std::endl;
@@ -180,12 +192,12 @@ void visualise_bodies(std::vector<Body> bodies){
             }
         }
         // The right border
-        std::cout<<"+"<<std::endl;
+        std::cout<<" +"<<std::endl;
     }
 
     // The bottom border
     std::cout<<"   "; 
-    for (int j = 0;j<21;j++){
+    for (int j = 0;j<22;j++){
         std::cout<<"+ "; 
     }
     std::cout<<"+"<<std::endl;

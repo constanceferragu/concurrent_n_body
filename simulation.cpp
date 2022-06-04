@@ -1,6 +1,6 @@
 #include "n_body.cpp"
-#define dt 1. // Let's say that dt, our time step, is 1 day
-#define MAX_TIME 10. // Let's say that we want to simulate one month, or approx. 28 days
+#define dt 1. // Let's say that dt, our time step, is 1 second
+#define MAX_TIME 604800./56 // Let's say that we want to simulate one month, or approx. 28 days
 // #define PRINT_FORCE_MATRIX
 #define PRINT_POSITIONS
 // #define PRINT_BEFORE_AFTER_APPLY_FORCE
@@ -92,8 +92,8 @@ int main(){
             #ifdef PRINT_BEFORE_AFTER_APPLY_FORCE
             std::cout<<"-----------Body "<<i<<"----------"<<std::endl;
             std::cout<<"before applying forces"<<std::endl;
-            #endif
             B_i->print();
+            #endif
             B_i->apply_force(total_x_force, total_y_force, dt); 
             #ifdef PRINT_BEFORE_AFTER_APPLY_FORCE
             std::cout<<"after applying forces"<<std::endl;
