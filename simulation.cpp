@@ -9,7 +9,7 @@ int main(){
     Body *B_i, *B_j; 
     double force_ij; 
     
-    int N = 2;
+    int N = 2; // number of bodies
     // std::vector<Body> bodies = generate_random_bodies(N);
     std::vector<Body> bodies = generate_earth_moon();
     double force_matrix[N][N]; 
