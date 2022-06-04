@@ -120,8 +120,10 @@ double get_force(Body* b_1, Body* b_2){
 
 void visualise_bodies(std::vector<Body> bodies){
     std::vector<int> xcoords, ycoords; 
+    double x_max = 0. ,y_max = 0. ; 
     for (size_t i=0; i<bodies.size(); i++){
         // bodies[i].x is in [-1,1], we want it rounded to an integer in [-10, 10]
+        // bodies[i].x is in [-X_max,X_max], we want it rounded to an integer in [-10, 10]
         xcoords.push_back((int) round(10*bodies[i].x) );
         ycoords.push_back((int) round(10*bodies[i].y) );
     }
