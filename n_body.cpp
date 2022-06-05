@@ -20,6 +20,7 @@ public:
     double mass; //kg
     double initial_v_x;
     double initial_v_y; //velocity magnitude in m/s
+    std::string name; // Just for visualisation, can be removed later
     // std::mutex lock; commented because was giving me bugs
 
     Body(){
@@ -28,6 +29,7 @@ public:
         this->mass = 0.0;
         this->initial_v_x = 0.0;
         this->initial_v_y = 0.0;
+        this->name = "B";
     }
 
     Body(double x, double y, double mass, double v_x, double v_y) {
@@ -36,6 +38,7 @@ public:
         this->mass = mass;
         this->initial_v_x = v_x;
         this->initial_v_y = v_y;
+        this->name = "B";
     }
     ~Body(); 
     // I think it makes more sense to have the get_force function
@@ -74,6 +77,7 @@ void Body::print(){
     std::cout<<"  y   : "<<this->y<<std::endl;
     std::cout<<"  v_x : "<<this->initial_v_x<<std::endl;
     std::cout<<"  v_y : "<<this->initial_v_y<<std::endl;
+    std::cout<<"  norm: "<<sqrt(pow(this->initial_v_x,2) + pow(this->initial_v_y,2))<<std::endl;
     std::cout<<"----------"<<std::endl;
 }
 std::vector<Body> generate_random_bodies(int num_bodies){
@@ -100,8 +104,27 @@ std::vector<Body> generate_random_bodies(int num_bodies){
 std::vector<Body> generate_earth_moon(){
     
     Body earth(0, 0, 5.972e24, 0, 0); // Earth is not moving and in the center. Its mass is 80 times that of the moon
-    Body moon(3.844e8, 0, 7.348e22, 0, -29786.); // Moon's starting position is at (1,0), i.e. to the right of the earth. It has 0 x velocity and -12.8 y velocity
+    Body moon(3.844e8, 0, 7.348e22, 0, -1000.); // Moon's starting position is at (1,0), i.e. to the right of the earth. It has 0 x velocity and -12.8 y velocity
+    earth.name = "E";
+    moon.name = "M";
     std::vector<Body> bodies{earth, moon};
+    return bodies; 
+}
+
+std::vector<Body> generate_earth_moon_sun(){ 
+    // WARNING this function does not really work.
+    //      It is not representative of the sun-earth-moon system because,
+    //      well there is no sun as you can see.
+    //      I removed the sun because with the resolution of the graph made
+    //      by visualise_bodies function the earth and the moon collide, so
+    //      it was not interesting. 
+    Body earth(0, 0, 5.972e24, 0, 0); // Earth is not moving and in the center. Its mass is 80 times that of the moon
+    Body moon(3.844e8, 0, 7.348e22, 0, -1000.); // Moon's starting position is at (1,0), i.e. to the right of the earth. It has 0 x velocity and -12.8 y velocity
+    Body small_moon(3.844e8/1.87, 0, 7.348e15, 0, -800.);
+    small_moon.name = "S";
+    earth.name = "E";
+    moon.name = "M";
+    std::vector<Body> bodies{earth, small_moon, moon};
     return bodies; 
 }
 
@@ -110,14 +133,25 @@ std::vector<Body> generate_earth_moon(){
 //     return (GRAVITY * b_1->mass * b_2->mass)/dist;
 // }
 
-
-
 double get_force(Body* b_1, Body* b_2){
     // IDEA: could it be good to let this function return the x and y components
     //          of the force instead of just the total force? We need to compute
     //          those at some point anyway. 
     double dist = pow( b_1->x - b_2->x , 2) + pow(b_1->y - b_2->y , 2);
     return (GRAVITY * b_1->mass * b_2->mass)/dist;
+}
+
+void get_force_components(Body* b_1, Body* b_2, double &F_x, double &F_y){ 
+    double dist = pow( b_1->x - b_2->x , 2) + pow(b_1->y - b_2->y , 2);
+    double magnitude = ((GRAVITY * b_1->mass * b_2->mass)/dist);
+    double adj, opp, hyp;
+    adj = b_2->x - b_1->x;
+    opp = b_2->y - b_1->y; 
+    hyp = sqrt(pow(adj,2)+pow(opp,2));
+    // recall that cos(theta) = adj/hyp
+    // recall that sin(theta) = opp/hyp
+    F_x = magnitude * adj/hyp;
+    F_y = magnitude * opp/hyp;
 }
 
 
@@ -134,19 +168,8 @@ double get_force(Body* b_1, Body* b_2){
 
 
 // printing
-void visualise_bodies(std::vector<Body> bodies){
+void visualise_bodies(std::vector<Body> bodies, double normalise_val){
     std::vector<int> xcoords, ycoords; 
-    double x_max = 0. ,y_max = 0. ; 
-    for (size_t i=0; i<bodies.size(); i++){
-        if (abs(bodies[i].x)>x_max){
-            x_max = abs(bodies[i].x); 
-        }
-        if (abs(bodies[i].y)>y_max) {
-            x_max = abs(bodies[i].x); 
-        }
-    }
-    double normalise_val = 1.1*3.844e8; // We normalise by a value that is slightly larger 
-    // double normalise_val = 1.1*std::max(x_max,y_max); // We normalise by a value that is slightly larger 
     for (size_t i=0; i<bodies.size(); i++){
         // bodies[i].x is in [-X_max,X_max], we want it rounded to an integer in [-10, 10]
         double new_x, new_y;
@@ -179,14 +202,16 @@ void visualise_bodies(std::vector<Body> bodies){
         for (int j = 0;j<21;j++){
             // we need to check if the point j,i is in xcoords,ycoords
             bool point = false;
+            std::string name;
             for (size_t k=0; k<bodies.size(); k++){
                 if (xcoords[k] == j-10 && ycoords[k] == 10-i){
                     point = true;
+                    name = bodies[k].name;
                     break;
                 }
             }
             if (point){
-                std::cout<<" B"; 
+                std::cout<<" "<<name; 
             } else{
                 std::cout<<"  "; 
             }
