@@ -52,7 +52,7 @@ int main(){
         // First we compute the forces between all of the bodies 
         for (int i = 0; i<N; i++){
             B_i = &bodies[i]; 
-            for (int j =0; j<N; j++){
+            for (int j =i; j<N; j++){
                 // we want to compute the forces between bodies i and j
                 if (i==j){
                     // don't compute force from i to i
@@ -66,15 +66,26 @@ int main(){
                 // them in a matrix. 
                 double force_x, force_y;
                 get_force_components(B_i, B_j, force_x, force_y); 
+                // since the matrices are symmetric but opposite sign,
+                // we can avoid computing each force twice
                 force_matrix_x[i][j] = force_x; 
                 force_matrix_y[i][j] = force_y; 
+                force_matrix_x[j][i] = -force_x; 
+                force_matrix_y[j][i] = -force_y; 
             }
         }
         #ifdef PRINT_FORCE_MATRIX
-        std::cout<<"---force matrix:---"<<std::endl; 
+        std::cout<<"---force matrix x:---"<<std::endl; 
         for (int i = 0; i < N; i++){
             for (int j = 0; j < N; j++){
-                std::cout << force_matrix[i][j] << " ";
+                std::cout << force_matrix_x[i][j] << " ";
+            }
+            std::cout << std::endl;
+        }
+        std::cout<<"---force matrix y:---"<<std::endl; 
+        for (int i = 0; i < N; i++){
+            for (int j = 0; j < N; j++){
+                std::cout << force_matrix_y[i][j] << " ";
             }
             std::cout << std::endl;
         }
