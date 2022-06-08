@@ -113,17 +113,17 @@ public:
         // 4 children not necessary  
 
         // create new quadrant dimensions from parent
-        if (quadrant = 0){
+        if (quadrant == 0){
             // NE 
             this->box_dimensions[0] = parent->box_dimensions[0];
             this->box_dimensions[1] = parent->box_dimensions[1];
         }
-        if (quadrant = 1){
+        if (quadrant == 1){
             // NE 
             this->box_dimensions[0] = parent->box_dimensions[0]+parent->box_dimensions[2];
             this->box_dimensions[1] = parent->box_dimensions[1];
         }
-        if (quadrant = 2){
+        if (quadrant == 2){
             // NE 
             this->box_dimensions[0] = parent->box_dimensions[0];
             this->box_dimensions[1] = parent->box_dimensions[1]+parent->box_dimensions[3];
@@ -141,9 +141,6 @@ public:
 
         this->center_of_mass[0] = this->center_of_mass[1] = 0.0;
         this->total_mass = 0.0;
-    }
-    Node(Body* body){
-        this->body;
     }
 };
 
