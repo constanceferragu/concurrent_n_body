@@ -1,4 +1,5 @@
 #include "n_body.cpp"
+#include <numeric>
 #define dt 1. // Let's say that dt, our time step, is 1 second
 #define DAY 86400. // Seconds in a day 
 #define WEEK 604800. // Seconds in a week

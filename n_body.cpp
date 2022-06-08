@@ -80,6 +80,7 @@ void Body::print(){
     std::cout<<"  norm: "<<sqrt(pow(this->initial_v_x,2) + pow(this->initial_v_y,2))<<std::endl;
     std::cout<<"----------"<<std::endl;
 }
+
 std::vector<Body> generate_random_bodies(int num_bodies){
     // For the moment, these are the boundaries:
     //      mass is between 0 and 100
