@@ -10,6 +10,11 @@
 #include <vector>
 #include <math.h>
 
+#define MASS_EARTH 5.972e24
+#define MASS_MOON 7.348e22
+#define DIST_EARTH_MOON 3.844e8
+#define VELOCITY_MOON 1000
+
 const double GRAVITY = 0.000000000066742;
 
 class Body {
@@ -20,9 +25,8 @@ public:
     double mass; //kg
     double initial_v_x;
     double initial_v_y; //velocity magnitude in m/s
+    // std::mutex lock; //commented because was giving me bugs
     std::string name; // Just for visualisation, can be removed later
-    // std::mutex lock; commented because was giving me bugs
-
     Body(){
         this->x = 0.0;
         this->y = 0.0;
@@ -30,7 +34,7 @@ public:
         this->initial_v_x = 0.0;
         this->initial_v_y = 0.0;
         this->name = "B";
-    }
+    };
 
     Body(double x, double y, double mass, double v_x, double v_y) {
         this->x = x;
@@ -39,12 +43,12 @@ public:
         this->initial_v_x = v_x;
         this->initial_v_y = v_y;
         this->name = "B";
-    }
+    };
     ~Body(); 
     // I think it makes more sense to have the get_force function
     //    a standalone function. - Siggi
     // double get_force(Body* b_1, Body* b_2);
-    void print();
+    void print(int boundary);
     void apply_force(double x_force, double y_force, double dt);
 };
 
@@ -69,12 +73,20 @@ void Body::apply_force(double x_force, double y_force, double dt){
 
 }
 
-void Body::print(){
+void Body::print(int boundary = 0){
     // For debugging purposes we print the characteristics of a body
     std::cout<<"---Body---"<<std::endl;
     std::cout<<"  mass: "<<this->mass<<std::endl;
-    std::cout<<"  x   : "<<this->x<<std::endl;
-    std::cout<<"  y   : "<<this->y<<std::endl;
+    if (boundary>0 && abs(this->x)>boundary){
+        std::cout<<"  x   : "<<this->x<<" - out of scope"<<std::endl;
+    } else {
+        std::cout<<"  x   : "<<this->x<<std::endl;
+    }
+    if (boundary>0 && abs(this->y)>boundary){
+        std::cout<<"  y   : "<<this->y<<" - out of scope"<<std::endl;
+    } else {
+        std::cout<<"  y   : "<<this->y<<std::endl;
+    }
     std::cout<<"  v_x : "<<this->initial_v_x<<std::endl;
     std::cout<<"  v_y : "<<this->initial_v_y<<std::endl;
     std::cout<<"  norm: "<<sqrt(pow(this->initial_v_x,2) + pow(this->initial_v_y,2))<<std::endl;
@@ -82,19 +94,19 @@ void Body::print(){
 }
 std::vector<Body> generate_random_bodies(int num_bodies){
     // For the moment, these are the boundaries:
-    //      mass is between 0 and 100
-    //      x,y coordinates are between -1 and 1
-    //      velocities are between -10 and 10 
+    //      mass is between 0 and mass(earth)
+    //      x,y coordinates are between -3.844e8 and 3.844e8 (distance earth-moon)
+    //      velocities are between -1000 and 1000
     std::vector<Body> bodies;
     double m,x,y,v_x, v_y;
     // Body rand_body; 
 
     for (int i=0; i<num_bodies; i++){
-        m = 100 * (rand() / double(RAND_MAX)) ;
-        x =2* (rand() / double(RAND_MAX)) -1 ;
-        y =2* (rand() / double(RAND_MAX)) -1;
-        v_x = 20 * (rand() / double(RAND_MAX)) -10;
-        v_y = 20 * (rand() / double(RAND_MAX)) -10;
+        m = MASS_EARTH * (rand() / double(RAND_MAX)) ;
+        x =2*DIST_EARTH_MOON*(rand() / double(RAND_MAX)) -DIST_EARTH_MOON ;
+        y =2*DIST_EARTH_MOON*(rand() / double(RAND_MAX)) -DIST_EARTH_MOON ;
+        v_x = 2*VELOCITY_MOON* (rand() / double(RAND_MAX))-VELOCITY_MOON;
+        v_y = 2*VELOCITY_MOON* (rand() / double(RAND_MAX))-VELOCITY_MOON;
         Body rand_body(x,y,m, v_x,v_y); 
         bodies.push_back(rand_body); 
     }
@@ -107,7 +119,10 @@ std::vector<Body> generate_earth_moon(){
     Body moon(3.844e8, 0, 7.348e22, 0, -1000.); // Moon's starting position is at (1,0), i.e. to the right of the earth. It has 0 x velocity and -12.8 y velocity
     earth.name = "E";
     moon.name = "M";
-    std::vector<Body> bodies{earth, moon};
+    // std::vector<Body> bodies{earth, moon};
+    std::vector<Body> bodies;
+    bodies.push_back(earth);
+    bodies.push_back(moon);
     return bodies; 
 }
 
@@ -124,7 +139,11 @@ std::vector<Body> generate_earth_moon_sun(){
     small_moon.name = "S";
     earth.name = "E";
     moon.name = "M";
-    std::vector<Body> bodies{earth, small_moon, moon};
+    // std::vector<Body> bodies{earth, small_moon, moon};
+    std::vector<Body> bodies;
+    bodies.push_back(earth);
+    bodies.push_back(small_moon);
+    bodies.push_back(moon);
     return bodies; 
 }
 
