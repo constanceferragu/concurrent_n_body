@@ -171,6 +171,12 @@ void BH_Tree::add_bodies(std::vector<Body*> bodies){
 void BH_Tree::insert(Node *node, Body* body){
     // internal node
     if (!(node->external)){
+        node->total_mass += body->mass;
+        node->center_of_mass[0] = ((node->center_of_mass[0]*node->total_mass) + 
+                                    (body->x*body->mass))/(body->mass + node->total_mass);
+
+        node->center_of_mass[1] = ((node->center_of_mass[1]*node->total_mass) + 
+                                    (body->y*body->mass))/(body->mass + node->total_mass);
         int new_quad = which_quadrant(body, node->box_dimensions);
         insert(node->quad_nodes[new_quad], body);
         
@@ -192,6 +198,12 @@ void BH_Tree::insert(Node *node, Body* body){
     else if (node->external){
         // now it will not be external 
         node->external = false;
+        node->total_mass += body->mass;
+        node->center_of_mass[0] = ((node->center_of_mass[0]*node->total_mass) + 
+                                    (body->x*body->mass))/(body->mass + node->total_mass);
+
+        node->center_of_mass[1] = ((node->center_of_mass[1]*node->total_mass) + 
+                                    (body->y*body->mass))/(body->mass + node->total_mass);
 
         // create children 
         Node* new_NW = new Node(node, 0);
