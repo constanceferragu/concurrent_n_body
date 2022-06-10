@@ -103,6 +103,7 @@ std::vector<Body> generate_random_bodies(int num_bodies){
     // Body rand_body; 
 
     for (int i=0; i<num_bodies; i++){
+        // srand((unsigned int)time(NULL)); // we give a random seed - no we don't
         m = MASS_EARTH * (rand() / double(RAND_MAX)) ;
         x =2*DIST_EARTH_MOON*(rand() / double(RAND_MAX)) -DIST_EARTH_MOON ;
         y =2*DIST_EARTH_MOON*(rand() / double(RAND_MAX)) -DIST_EARTH_MOON ;
@@ -112,6 +113,29 @@ std::vector<Body> generate_random_bodies(int num_bodies){
         bodies.push_back(rand_body); 
     }
     return bodies; 
+}
+
+Body** generate_random_bodies_pointers(int num_bodies){
+    // For the moment, these are the boundaries:
+    //      mass is between 0 and mass(earth)
+    //      x,y coordinates are between -3.844e8 and 3.844e8 (distance earth-moon)
+    //      velocities are between -1000 and 1000
+    std::vector<Body> bodies;
+    Body **temp;
+    double m,x,y,v_x, v_y;
+    // Body rand_body; 
+
+    for (int i=0; i<num_bodies; i++){
+        // srand((unsigned int)time(NULL)); // we give a random seed - no we don't
+        m = MASS_EARTH * (rand() / double(RAND_MAX)) ;
+        x =2*DIST_EARTH_MOON*(rand() / double(RAND_MAX)) -DIST_EARTH_MOON ;
+        y =2*DIST_EARTH_MOON*(rand() / double(RAND_MAX)) -DIST_EARTH_MOON ;
+        v_x = 2*VELOCITY_MOON* (rand() / double(RAND_MAX))-VELOCITY_MOON;
+        v_y = 2*VELOCITY_MOON* (rand() / double(RAND_MAX))-VELOCITY_MOON;
+        Body rand_body(x,y,m, v_x,v_y); 
+        bodies.push_back(rand_body); 
+    }
+    return temp; 
 }
 
 std::vector<Body> generate_earth_moon(){
@@ -153,6 +177,10 @@ std::vector<Body> generate_earth_moon_sun(){
 //     return (GRAVITY * b_1->mass * b_2->mass)/dist;
 // }
 
+double dist_to_center(Body* b){
+    return sqrt(pow(b->x,2) + pow(b->y,2));
+}
+
 double get_force(Body* b_1, Body* b_2){
     // IDEA: could it be good to let this function return the x and y components
     //          of the force instead of just the total force? We need to compute
@@ -188,7 +216,7 @@ void get_force_components(Body* b_1, Body* b_2, double &F_x, double &F_y){
 
 
 // printing
-void visualise_bodies(std::vector<Body> bodies, double normalise_val){
+void visualise_bodies(std::vector<Body> bodies, double normalise_val, int b_size=0){
     std::vector<int> xcoords, ycoords; 
     for (size_t i=0; i<bodies.size(); i++){
         // bodies[i].x is in [-X_max,X_max], we want it rounded to an integer in [-10, 10]
@@ -227,6 +255,81 @@ void visualise_bodies(std::vector<Body> bodies, double normalise_val){
                 if (xcoords[k] == j-10 && ycoords[k] == 10-i){
                     point = true;
                     name = bodies[k].name;
+                    break;
+                }
+            }
+            if (point){
+                std::cout<<" "<<name; 
+            } else{
+                std::cout<<"  "; 
+            }
+        }
+        // The right border
+        std::cout<<" +"<<std::endl;
+    }
+
+    // The bottom border
+    std::cout<<"   "; 
+    for (int j = 0;j<22;j++){
+        std::cout<<"+ "; 
+    }
+    std::cout<<"+"<<std::endl;
+    std::cout<<"    "; 
+
+    // The x-coordinates
+    for (int j = 0;j<21;j++){
+        if (j%10 == 0){
+            if (j<5) {
+                std::cout<<-1+j/10<<"";
+            } else {
+                std::cout<<" "<<-1+j/10<<"";
+            }
+        } else {
+            std::cout<<"  ";
+        }
+    }
+    std::cout<<std::endl; 
+}
+
+void visualise_bodies(Body** bodies, double normalise_val, size_t b_size=0){
+    std::vector<int> xcoords, ycoords; 
+    for (size_t i=0; i<b_size; i++){
+        // bodies[i].x is in [-X_max,X_max], we want it rounded to an integer in [-10, 10]
+        double new_x, new_y;
+        new_x = bodies[i]->x/normalise_val;
+        new_y = bodies[i]->y/normalise_val;
+        xcoords.push_back((int) round(10*new_x));
+        ycoords.push_back((int) round(10*new_y));
+
+    }
+    // The top border
+    std::cout<<"   "; 
+    for (int j = 0;j<22;j++){
+        std::cout<<"+ "; 
+    }
+    std::cout<<"+"<<std::endl;
+
+    // The grid itself and side borders, y coords
+    for (int i = 0;i<21;i++){
+        // The y coordinates and left border 
+        if (i%10 == 0){
+            if (i<18) {
+                std::cout<<1-i/10<<"  +";
+            } else {
+                std::cout<<1-i/10<<" +";
+            }
+        } else {
+            std::cout<<"   +";
+        }
+        // The grid itself
+        for (int j = 0;j<21;j++){
+            // we need to check if the point j,i is in xcoords,ycoords
+            bool point = false;
+            std::string name;
+            for (size_t k=0; k<b_size; k++){
+                if (xcoords[k] == j-10 && ycoords[k] == 10-i){
+                    point = true;
+                    name = bodies[k]->name;
                     break;
                 }
             }
