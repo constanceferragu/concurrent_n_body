@@ -10,7 +10,7 @@
 // #define PRINT_BEFORE_AFTER_APPLY_FORCE
 
 int main(){
-    Body *B_i, *B_j; 
+    Body *B_i, *B_j;
     // double force_ij; 
     
     int N = 2; // number of bodies

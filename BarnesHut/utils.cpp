@@ -1,3 +1,5 @@
+#include "node.cpp"
+//----------------------------------------------------------------------------------------------------
 
 // find which quadrant a body is in 
 // needed to place a body in a child node 
