@@ -6,16 +6,24 @@
 #define MAX_TIME 604800. // Let's say that we want to simulate one month, or approx. 28 days
 // #define MAX_TIME 1 // Let's say that we want to simulate one month, or approx. 28 days
 // #define PRINT_FORCE_MATRIX
-#define PRINT_POSITIONS
+// #define PRINT_POSITIONS
+#define PRINT_POSITIONS_VISUAL
 // #define PRINT_BEFORE_AFTER_APPLY_FORCE
 
 int main(){
     Body *B_i, *B_j;
     // double force_ij; 
     
-    int N = 2; // number of bodies
-    // std::vector<Body> bodies = generate_random_bodies(N);
-    std::vector<Body> bodies = generate_earth_moon();
+    int N = 20; // number of bodies
+    std::vector<Body> bodies = generate_random_bodies(N);
+    double max_dist = 0.;
+    for (size_t i =0; i<bodies.size(); i++){
+        if (dist_to_center(&bodies[i])>max_dist){
+            max_dist = dist_to_center(&bodies[i]);
+        }
+    }
+    std::cout<<"max distance is: "<<max_dist<<std::endl; 
+    // std::vector<Body> bodies = generate_earth_moon();
 
     // =================
     // This part is only for the visualisation function, to fit all the bodies on the same screen
@@ -34,7 +42,7 @@ int main(){
                                 // }
                                 // double normalise_val = 1.1*std::max(x_max,y_max); // We normalise by a value that is slightly larger 
     // HARDCODED
-    double normalise_val = 1.1* (3.844e8); //
+    double normalise_val = 1.1* max_dist; //
     // =================    
     double force_matrix_x[N][N]; 
     double force_matrix_y[N][N]; 
@@ -44,6 +52,8 @@ int main(){
     for (int i = 0; i<N; i++){
         bodies[i].print();
     }
+    #endif
+    #ifdef PRINT_POSITIONS_VISUAL
     visualise_bodies(bodies, normalise_val); 
     #endif
     double time = 0;
@@ -113,8 +123,10 @@ int main(){
     for (int i = 0; i<N; i++){
         bodies[i].print();
     }
-    visualise_bodies(bodies, normalise_val); 
     #endif 
+    #ifdef PRINT_POSITIONS_VISUAL
+    visualise_bodies(bodies, normalise_val); 
+    #endif
 
 
     return 0; 
