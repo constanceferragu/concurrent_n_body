@@ -1,11 +1,15 @@
 #include "n_body.cpp"
+#include <numeric>
+#include <iomanip>      // std::setprecision
 #define dt 1. // Let's say that dt, our time step, is 1 second
 #define DAY 86400. // Seconds in a day 
 #define WEEK 604800. // Seconds in a week
 #define MAX_TIME 604800. // Let's say that we want to simulate one month, or approx. 28 days
 // #define MAX_TIME 1 // Let's say that we want to simulate one month, or approx. 28 days
 // #define PRINT_FORCE_MATRIX
-#define PRINT_POSITIONS
+// #define PRINT_FINAL_FORCE_MATRIX
+#define PRINT_POSITIONS_VISUAL
+// #define PRINT_POSITIONS
 // #define PRINT_BEFORE_AFTER_APPLY_FORCE
 
 #define NUM_BODIES 2 // VERY important to define num bodies as a macro
@@ -38,7 +42,7 @@ void fill_force_matrix(double **matrix_x,double **matrix_y, Body **bodies, int s
 }
 
 int main(int argc, char* argv[]){
-    /*
+    
     if (argc < 3) {
         std::cout << "Usage: ./simulation_threads num_bodies num_threads" << std::endl;
         return 0;
@@ -50,11 +54,14 @@ int main(int argc, char* argv[]){
         return 0;
     }
     std::vector<Body> bodies = generate_random_bodies(N);
-    */
+     
 
-    int N = 4; // number of bodies
-    int num_threads = 2; // number of threads 
+    // int N = 4; // number of bodies
+    // int num_threads = 2; // number of threads 
     int chunk_size = N/num_threads; // at first we assume num threads divides N
+    int num_diag = N/chunk_size; // This will be equal to num_threads if num_threads divides N
+    int rest = N - num_diag * chunk_size; // This will be 0 if num_diag == num_threads
+    
     /*
     Body earth(0, 0, 5.972e24, 0, 0); // Earth is not moving and in the center. Its mass is 80 times that of the moon
     Body moon1(-3.844e8, 0, 7.348e22, 0., 1000.); // Moon's starting position is at (1,0), i.e. to the right of the earth. It has 0 x velocity and -12.8 y velocity
@@ -66,6 +73,7 @@ int main(int argc, char* argv[]){
     moon3.name = "3";
     std::vector<Body> bodies{earth,moon1,moon2,moon3};
     */
+    /*
     Body* earth = new Body(0, 0, 5.972e24, 0, 0); // Earth is not moving and in the center. Its mass is 80 times that of the moon
     Body* moon1 = new Body(-3.844e8, 0, 7.348e22, 0., 1000.); // Moon's starting position is at (1,0), i.e. to the right of the earth. It has 0 x velocity and -12.8 y velocity
     Body* moon2 = new Body(0, 3.844e8, 7.348e22, 1000.,  0.); // Moon's starting position is at (1,0), i.e. to the right of the earth. It has 0 x velocity and -12.8 y velocity
@@ -74,32 +82,21 @@ int main(int argc, char* argv[]){
     moon1->name = "1";
     moon2->name = "2";
     moon3->name = "3";
+    */
     // std::vector<Body*> body_pointers{earth,moon1,moon2,moon3};
-    Body* body_pointers[] = {earth,moon1,moon2,moon3};
+    // Body* body_pointers[] = {earth,moon1,moon2,moon3};
+    Body** body_pointers = generate_random_bodies_pointers(N); 
     Body *B_i; 
     std::vector<std::thread> workers(num_threads);
 
-    // =================
-    // This part is only for the visualisation function, to fit all the bodies on the same screen
-    // I COMMENTED IT BECAUSE FOR WHATEVER REASON, x_max and y_max always stay equal to 0. 
-    // THE value normalise_val is hardcoded to work with the earth-moon system.
-                                // double x_max = 0. ,y_max = 0. ; 
-                                // for (size_t i=0; i<bodies.size(); i++){
-                                //     // if (abs(bodies[i].x)>x_max){
-                                //     if (bodies[i].x>x_max){
-                                //         x_max = abs(bodies[i].x); 
-                                //     }
-                                //     // if (abs(bodies[i].y)>y_max) {
-                                //     if (bodies[i].y>y_max) {
-                                //         x_max = abs(bodies[i].x); 
-                                //     }
-                                // }
-                                // double normalise_val = 1.1*std::max(x_max,y_max); // We normalise by a value that is slightly larger 
-    // HARDCODED
-    double normalise_val = 1.1* (3.844e8); //
-    // =================    
-    // double force_matrix_x[N][N]; 
-    // double force_matrix_y[N][N]; 
+    double max_dist = 0.;
+    for (int i =0; i<N; i++){
+        if (dist_to_center(body_pointers[i])>max_dist){
+            max_dist = dist_to_center(body_pointers[i]);
+        }
+    }
+    std::cout<<"max distance is: "<<max_dist<<std::endl; 
+    double normalise_val = 1.1* max_dist; 
 
     double **force_matrix_x = new double* [N];
     double **force_matrix_y = new double* [N];
@@ -115,17 +112,18 @@ int main(int argc, char* argv[]){
         body_pointers[i]->print(normalise_val);
     }
     // visualise_bodies(bodies, normalise_val); 
-    visualise_bodies(body_pointers, normalise_val,N); 
+    #endif
+    #ifdef PRINT_POSITIONS_VISUAL
+    visualise_bodies(body_pointers, normalise_val, N); 
     #endif
     double time = 0;
 
-
-    while (time<WEEK){
+    while (time<DAY){
         // First we compute the forces between all of the bodies
         // we delegate the work to the fill_force_matrix function
         // fill_force_matrix(force_matrix_x, force_matrix_y, body_pointers, 0,N, 0,N);
         // SHOULD ONLY FILL DIAGONAL
-        for (int diag_i=0; diag_i< num_threads; diag_i++){
+        for (int diag_i=0; diag_i< num_diag; diag_i++){
             // we fill in the matrix, one diagonal at a time.
             // if this is the matrix, we compute A, then B, then C
             // A  B  C
@@ -145,13 +143,13 @@ int main(int argc, char* argv[]){
                     workers[thread_i] = std::thread(&fill_force_matrix, force_matrix_x, force_matrix_y, body_pointers, 0, 0, 0, 0);
                 }
             }
+            // Here we do the rest
+            int start_i_rest = N - rest;
+            int start_j_rest = N - rest;
 
             for (int thread_i = 0; thread_i < num_threads; ++thread_i) {
                 workers[thread_i].join();
             }
-
-
-
         }
         // SumMapThread(start_block, end, f, results[num_threads - 1]);
 
@@ -197,9 +195,28 @@ int main(int argc, char* argv[]){
         body_pointers[i]->print();
     }
     // visualise_bodies(bodies, normalise_val); 
-    visualise_bodies(body_pointers, normalise_val,N); 
     #endif 
+    #ifdef PRINT_POSITIONS_VISUAL
+    visualise_bodies(body_pointers, normalise_val, N); 
+    #endif
 
+    #ifdef PRINT_FINAL_FORCE_MATRIX
+    std::cout<<"---force matrix x:---"<<std::endl; 
+    for (int i = 0; i < N; i++){
+        for (int j = 0; j < N; j++){
+            std::cout << force_matrix_x[i][j] << " ";
+        }
+        std::cout << std::endl;
+    }
+    std::cout<<"---force matrix y:---"<<std::endl; 
+    for (int i = 0; i < N; i++){
+        for (int j = 0; j < N; j++){
+            std::cout << std::setprecision(4) << force_matrix_y[i][j] << " ";
+        }
+        std::cout << std::endl;
+    }
+    std::cout<<"------"<<std::endl; 
+    #endif
 
     return 0; 
 }

@@ -1,11 +1,13 @@
 #include "n_body.cpp"
 #include <numeric>
+#include <iomanip>      // std::setprecision
 #define dt 1. // Let's say that dt, our time step, is 1 second
 #define DAY 86400. // Seconds in a day 
 #define WEEK 604800. // Seconds in a week
 #define MAX_TIME 604800. // Let's say that we want to simulate one month, or approx. 28 days
 // #define MAX_TIME 1 // Let's say that we want to simulate one month, or approx. 28 days
 // #define PRINT_FORCE_MATRIX
+// #define PRINT_FINAL_FORCE_MATRIX
 // #define PRINT_POSITIONS
 #define PRINT_POSITIONS_VISUAL
 // #define PRINT_BEFORE_AFTER_APPLY_FORCE
@@ -14,7 +16,7 @@ int main(){
     Body *B_i, *B_j; 
     // double force_ij; 
     
-    int N = 20; // number of bodies
+    int N = 4; // number of bodies
     std::vector<Body> bodies = generate_random_bodies(N);
     double max_dist = 0.;
     for (size_t i =0; i<bodies.size(); i++){
@@ -59,7 +61,7 @@ int main(){
     double time = 0;
 
 
-    while (time<WEEK){
+    while (time<DAY){
         // First we compute the forces between all of the bodies 
         for (int i = 0; i<N; i++){
             B_i = &bodies[i]; 
@@ -127,6 +129,24 @@ int main(){
     #ifdef PRINT_POSITIONS_VISUAL
     visualise_bodies(bodies, normalise_val); 
     #endif
+
+    #ifdef PRINT_FINAL_FORCE_MATRIX
+        std::cout<<"---force matrix x:---"<<std::endl; 
+        for (int i = 0; i < N; i++){
+            for (int j = 0; j < N; j++){
+                std::cout << force_matrix_x[i][j] << " ";
+            }
+            std::cout << std::endl;
+        }
+        std::cout<<"---force matrix y:---"<<std::endl; 
+        for (int i = 0; i < N; i++){
+            for (int j = 0; j < N; j++){
+                std::cout << std::setprecision(4) << force_matrix_y[i][j] << " ";
+            }
+            std::cout << std::endl;
+        }
+        std::cout<<"------"<<std::endl; 
+        #endif
 
 
     return 0; 

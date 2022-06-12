@@ -120,8 +120,7 @@ Body** generate_random_bodies_pointers(int num_bodies){
     //      mass is between 0 and mass(earth)
     //      x,y coordinates are between -3.844e8 and 3.844e8 (distance earth-moon)
     //      velocities are between -1000 and 1000
-    std::vector<Body> bodies;
-    Body **temp;
+    Body** bodies = new Body*[num_bodies];
     double m,x,y,v_x, v_y;
     // Body rand_body; 
 
@@ -132,10 +131,10 @@ Body** generate_random_bodies_pointers(int num_bodies){
         y =2*DIST_EARTH_MOON*(rand() / double(RAND_MAX)) -DIST_EARTH_MOON ;
         v_x = 2*VELOCITY_MOON* (rand() / double(RAND_MAX))-VELOCITY_MOON;
         v_y = 2*VELOCITY_MOON* (rand() / double(RAND_MAX))-VELOCITY_MOON;
-        Body rand_body(x,y,m, v_x,v_y); 
-        bodies.push_back(rand_body); 
+        Body* rand_body = new Body(x,y,m, v_x,v_y); 
+        bodies[i] = rand_body;
     }
-    return temp; 
+    return bodies; 
 }
 
 std::vector<Body> generate_earth_moon(){
