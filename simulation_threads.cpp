@@ -12,7 +12,6 @@
 // #define PRINT_POSITIONS
 // #define PRINT_BEFORE_AFTER_APPLY_FORCE
 
-#define NUM_BODIES 2 // VERY important to define num bodies as a macro
 
 
 void fill_force_matrix(double **matrix_x,double **matrix_y, Body **bodies, int start_i, int end_i, int start_j, int end_j){
