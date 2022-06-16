@@ -6,13 +6,13 @@ Here are a few instructions on the files, what they do and how to run them.
 
 
 
-## n_body.cpp
+### n_body.cpp
   
   That is the file containing the class NBody, which is included in all other files as it defines the bodies. 
   
   
  
-## simulation.cpp
+### simulation.cpp
 
   That is the file containing the thread free algorithm and its visualization printed.
   To run it, do: 
@@ -21,7 +21,7 @@ Here are a few instructions on the files, what they do and how to run them.
   
  
  
-## simulation_visualize.cpp
+### simulation_visualize.cpp
   
   That is the file containing the thread free algorithm and its visualization using SFML.
   To run it, you need to: 
@@ -35,7 +35,7 @@ Here are a few instructions on the files, what they do and how to run them.
 
 
 
-## simulation_threads.cpp
+### simulation_threads.cpp
   That is the file containing the algorithm with threads and its visualization using SFML.
   To run it, you need to: 
   - go into the makefile
