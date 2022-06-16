@@ -5,6 +5,7 @@
 #include <SFML/Graphics.hpp>
 
 #define dt 1. // Let's say that dt, our time step, is 1 second
+#define HOUR 3600. // Seconds in a day 
 #define DAY 86400. // Seconds in a day 
 #define WEEK 604800. // Seconds in a week
 #define MAX_TIME 604800. // Let's say that we want to simulate one month, or approx. 28 days
@@ -42,7 +43,7 @@ int main(){
 
     vector <vector <pair<int,int> > > vec_of_times;
     double time = 0;
-    while (time<WEEK) {
+    while (time<4*WEEK) {
         // First we compute the forces between all of the bodies 
         for (int i = 0; i<N; i++){
             B_i = &bodies[i]; 
@@ -85,7 +86,7 @@ int main(){
             // now we have sucessfully updated the position of B_i
             if (fmod(time, DAY) == 0) {
                 double new_x = bodies[i].x/normalise_val * 380; 
-                double new_y = bodies[i].y/normalise_val * 380;
+                double new_y = -bodies[i].y/normalise_val * 380;
                 pos_at_time.push_back(make_pair(new_x, new_y));
             }
 
@@ -122,17 +123,17 @@ int main(){
             shape.setFillColor(sf::Color(0, 0, 0)); // black dot 
             double x = vec_of_times[t][i].first;
             double y = vec_of_times[t][i].second;
-            cout<<x<<' '<<y<<endl;
+            // cout<<x<<' '<<y<<endl;
             shape.setPosition(x+380, y+380); 
-            sf::Vector2f position = shape.getPosition();
            
             window.draw(shape); // we can draw a lot of shapes and not display them until all of the bodies have been drawn
         }
         
         // now that all bodies for time t have been displayed, we can display the window
         window.display();
-		sleep(2); // sleeping so that it stays on the screen for at least a second, otherwise it goes by too fast
-		t ++;
+		// sleep(1); // sleeping so that it stays on the screen for at least a second, otherwise it goes by too fast
+		usleep(250000);
+        t ++;
     }
 
 
