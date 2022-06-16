@@ -30,7 +30,7 @@ Here are a few instructions on the files, what they do and how to run them.
     where YOUR_PATH is the path where SFML is installed on your computer (for me it is YOUR_PATH = usr/local/Cellar/sfml/2.5.1_1)
   - change the variable PATH2 from PATH2 = -L/usr/local/Cellar/sfml/2.5.1_1/lib/ to PATH2= -L/YOUR_PATH/lib/
   Then do:
-  - make simulation_visualize
+  - make visualize
   - ./simulation_visualize.cpp
 
 
@@ -43,7 +43,7 @@ Here are a few instructions on the files, what they do and how to run them.
     where YOUR_PATH is the path where SFML is installed on your computer (for me it is YOUR_PATH = usr/local/Cellar/sfml/2.5.1_1)
   - change the variable PATH2 from PATH2 = -L/usr/local/Cellar/sfml/2.5.1_1/lib/ to PATH2= -L/YOUR_PATH/lib/
   Then do:
-  - make simulation_threads
+  - make threads
   - ./simulation_threads.cpp
   
 
