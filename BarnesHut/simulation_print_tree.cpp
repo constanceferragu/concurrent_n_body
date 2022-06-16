@@ -20,34 +20,9 @@ int main(){
     std::vector<Body*> bodies{b1, b2, b3, b4, b5, b6, b7, b8};
     double box_dim[4] = {0,0,1,1};
     BH_Tree* tree = new BH_Tree(box_dim, bodies);
+
+    // prints the tree in terminal 
     tree->print_tree();
 
-    // force matrices 
-    double force_matrix_x[N]; 
-    double force_matrix_y[N]; 
-
-    double time  = 0;
-
-    while (time <= max_time){
-
-        // compute forces 
-        for (int i = 0; i<N; i++){
-            b_i = bodies[i]; 
-            // compute force on this body 
-            double F_x, F_y;
-            tree->compute_force_on_b(b_i, theta, F_x, F_y);
-
-            force_matrix_x[i] = F_x;
-            force_matrix_y[i] = F_y;
-        }
-
-        // update (x,y) coordinates 
-        for (int i = 0; i<N; i++){
-            bodies[i]->apply_force(force_matrix_x[i], force_matrix_y[i], dt);
-        }
-
-        // update time 
-        time += dt; 
-    }
     return 0;
 }

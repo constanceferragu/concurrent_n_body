@@ -1,5 +1,14 @@
 #include "../n_body.cpp"
+
+
 //----------------------------------------------------------------------------------------------------
+
+// Implementation of a node of a Barnes Hut Tree 
+// Quick overview: this node represents a box or a body.
+// If it is a body, it is a "terminal"/"external" node. 
+// If it is a body, it represents a box that contains bodies. 
+    // in this case, its four children represent its 4 quadrants 
+    // (or a single body in one of the quadrants)
 
 class Node {
 public:
@@ -10,23 +19,23 @@ public:
     bool contains_body;
 
     // external = end node (no children)
-    // all children are NULL 
     bool external;
 
-    // to get coordinates of the quadrant(s)
-    // left corner x, left corner y, x length, y length
+    // Coordinates of the quadrant(s)
+    // left bottom corner x, left bottom corner y, x length, y length
+    // from these dimensions we can compute the coordinates of 
+    // the box and its quadrants 
     double box_dimensions[4];
-    //double bottom_left_corner_x;
-    //double bottom_left_corner_y;
-    //double x_length;
-    //double y_length;
 
     // std::mutex lock;
 
+    // Four children - nodes of each quadrant in this box
     Node* quad_nodes[4]; 
+
     Node* parent;
     Body* body;
 
+    // Creates an empty node: external and does not contain a body 
     Node() {
         this->box_dimensions[0] = this->box_dimensions[1] = 
                                 this->box_dimensions[2] = this->box_dimensions[3] = 0.0;
@@ -40,22 +49,22 @@ public:
         this->total_mass = 0.0;
 
         this->contains_body = false;
-        this->external = false;
+        this->external = true;
 
     }
 
+    // Creates a node from a parent node, specifying which quadrant of the parent it is 
     Node(Node* parent, int quadrant){
         this->parent = parent;
+        // does not contain a body for the moment
         this->contains_body = false;
-        // --> body not necessary 
-
+        
         this->external = true;
-        // --> center of mass and total mass not necessary
-        // 4 children not necessary  
 
         // create new quadrant dimensions from parent
         this->box_dimensions[2] = parent->box_dimensions[2]/2;
         this->box_dimensions[3] = parent->box_dimensions[3]/2;
+            
         if (quadrant == 0){
             // NW 
             this->box_dimensions[0] = parent->box_dimensions[0];
@@ -76,8 +85,8 @@ public:
             this->box_dimensions[0] = parent->box_dimensions[0]+this->box_dimensions[2];
             this->box_dimensions[1] = parent->box_dimensions[1];
         }
-        
 
+        
         this->quad_nodes[0] = this->quad_nodes[1] = this->quad_nodes[2] = this->quad_nodes[3] = NULL;
         this->body = NULL;
 
