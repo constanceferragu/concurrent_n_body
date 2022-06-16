@@ -72,19 +72,19 @@ int main(int argc, char* argv[]){
     moon3.name = "3";
     std::vector<Body> bodies{earth,moon1,moon2,moon3};
     */
-    /*
+    
     Body* earth = new Body(0, 0, 5.972e24, 0, 0); // Earth is not moving and in the center. Its mass is 80 times that of the moon
     Body* moon1 = new Body(-3.844e8, 0, 7.348e22, 0., 1000.); // Moon's starting position is at (1,0), i.e. to the right of the earth. It has 0 x velocity and -12.8 y velocity
-    Body* moon2 = new Body(0, 3.844e8, 7.348e22, 1000.,  0.); // Moon's starting position is at (1,0), i.e. to the right of the earth. It has 0 x velocity and -12.8 y velocity
-    Body* moon3 = new Body(3.844e8, 0, 7.348e22, 0., -1000.); // Moon's starting position is at (1,0), i.e. to the right of the earth. It has 0 x velocity and -12.8 y velocity
+    // Body* moon2 = new Body(0, 3.844e8, 7.348e22, 1000.,  0.); // Moon's starting position is at (1,0), i.e. to the right of the earth. It has 0 x velocity and -12.8 y velocity
+    // Body* moon3 = new Body(3.844e8, 0, 7.348e22, 0., -1000.); // Moon's starting position is at (1,0), i.e. to the right of the earth. It has 0 x velocity and -12.8 y velocity
     earth->name = "E";
     moon1->name = "1";
-    moon2->name = "2";
-    moon3->name = "3";
-    */
+    // moon2->name = "2";
+    // moon3->name = "3";
+    
     // std::vector<Body*> body_pointers{earth,moon1,moon2,moon3};
-    // Body* body_pointers[] = {earth,moon1,moon2,moon3};
-    Body** body_pointers = generate_random_bodies_pointers(N); 
+    Body* body_pointers[] = {earth,moon1};
+    // Body** body_pointers = generate_random_bodies_pointers(N); 
     Body *B_i; 
     std::vector<std::thread> workers(num_threads);
 
@@ -117,7 +117,7 @@ int main(int argc, char* argv[]){
     #endif
     double time = 0;
 
-    while (time<DAY){
+    while (time<WEEK){
         // First we compute the forces between all of the bodies
         // we delegate the work to the fill_force_matrix function
         // fill_force_matrix(force_matrix_x, force_matrix_y, body_pointers, 0,N, 0,N);
