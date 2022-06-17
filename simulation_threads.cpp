@@ -61,25 +61,12 @@ int main(int argc, char* argv[]){
     }
     std::vector<Body> bodies = generate_random_bodies(N);
      
-
-    // int N = 4; // number of bodies
-    // int num_threads = 2; // number of threads 
+ 
     int chunk_size = N/num_threads; // at first we assume num threads divides N
     int num_diag = N/chunk_size; // This will be equal to num_threads if num_threads divides N
     int rest = N - num_diag * chunk_size; // This will be 0 if num_diag == num_threads
     
-    /*
-    Body earth(0, 0, 5.972e24, 0, 0); // Earth is not moving and in the center. Its mass is 80 times that of the moon
-    Body moon1(-3.844e8, 0, 7.348e22, 0., 1000.); // Moon's starting position is at (1,0), i.e. to the right of the earth. It has 0 x velocity and -12.8 y velocity
-    Body moon2(0, 3.844e8, 7.348e22, 1000.,  0.); // Moon's starting position is at (1,0), i.e. to the right of the earth. It has 0 x velocity and -12.8 y velocity
-    Body moon3(3.844e8, 0, 7.348e22, 0., -1000.); // Moon's starting position is at (1,0), i.e. to the right of the earth. It has 0 x velocity and -12.8 y velocity
-    earth.name = "E";
-    moon1.name = "1";
-    moon2.name = "2";
-    moon3.name = "3";
-    std::vector<Body> bodies{earth,moon1,moon2,moon3};
-    */
-    
+    // TO RUN WITH EARTH MOON SIMULATION (3 MOONS ACTUALLY) UNCOMMENT THESE LINES
     // Body* earth = new Body(0, 0, 5.972e24, 0, 0); // Earth is not moving and in the center. Its mass is 80 times that of the moon
     // Body* moon1 = new Body(-3.844e8, 0, 7.348e22, 0., 1000.); // Moon's starting position is at (1,0), i.e. to the right of the earth. It has 0 x velocity and -12.8 y velocity
     // Body* moon2 = new Body(0, 3.844e8, 7.348e22, 1000.,  0.); // Moon's starting position is at (1,0), i.e. to the right of the earth. It has 0 x velocity and -12.8 y velocity
@@ -88,9 +75,10 @@ int main(int argc, char* argv[]){
     // moon1->name = "1";
     // moon2->name = "2";
     // moon3->name = "3";
-    
+    // N = 4;
     // std::vector<Body*> body_pointers{earth,moon1,moon2,moon3};
     // Body* body_pointers[] = {earth,moon1, moon2, moon3};
+    // ________________________________________________________
     Body** body_pointers = generate_random_bodies_pointers(N); 
     Body *B_i; 
     std::vector<std::thread> workers(num_threads);
