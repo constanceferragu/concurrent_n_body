@@ -1,16 +1,17 @@
-# concurrent_n_body
+# Concurrent Project 
+#### Sigurjon Agustsson, Saga David, Constance Ferragu
 
 Here are a few instructions on the files, what they do and how to run them.
 
 
 
-### n_body.cpp
+## n_body.cpp
   
-  That is the file containing the class NBody, which is included in all other files as it defines the bodies. 
+That is the file containing the class NBody, which is included in all other files as it defines the bodies. 
   
   
  
-### simulation.cpp
+## simulation.cpp
 
   That is the file containing the thread free algorithm and its visualization printed.
   To run it, do: 
@@ -24,7 +25,7 @@ It can also be run with an argument N, where N is the number of random bodies yo
   
  
  
-### simulation_visualize.cpp
+## simulation_visualize.cpp
   
   That is the file containing the thread free algorithm and its visualization using SFML.
   To run it, you need to: 
@@ -40,7 +41,7 @@ It can also be run with an argument N, where N is the number of random bodies yo
  
 
 
-### simulation_threads.cpp
+## simulation_threads.cpp
 the file simulation_threads.cpp has the parallel version of the algorithm. Build it with the command 'make threads'. It will create the file ./simulation_threads which can be run with arguments num_bodies and num_threads. 
 
 There is a catch though, the num_bodies has to be an even number and it has to be divisible by num_threads. This is due to a problem in the implementation where we divide the tasks evenly among the threads, and if the last block is larger than the rest we have issues. 
@@ -56,7 +57,7 @@ In order to run the parallel algorithm with an earth moon system, uncomment the 
 
 
 
-### simulation_threads_visualize.cpp
+## simulation_threads_visualize.cpp
 
   That is the file containing the algorithm with threads and its visualization using SFML.
   To run it, you need to: 
@@ -70,7 +71,7 @@ In order to run the parallel algorithm with an earth moon system, uncomment the 
 
 
 
-### simulation_moving_bodies_visualize.cpp
+## simulation_moving_bodies_visualize.cpp
 
   That is the file containing the visualization of the Barnes-Hutt simulation
   To run it, you need to: 
