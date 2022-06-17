@@ -4,7 +4,7 @@
 
 #include <vector>
 #include <unistd.h>
-// #include <SFML/Graphics.hpp>
+#include <SFML/Graphics.hpp>
 
 #define dt 1. // Let's say that dt, our time step, is 1 second
 #define HOUR 3600.
@@ -99,21 +99,10 @@ int main(int argc, char* argv[]){
         force_matrix_y[i] = new double[N];
     }
 
-    #ifdef PRINT_POSITIONS
-    std::cout<<"Initial positions:"<<std::endl; 
-    for (int i = 0; i<N; i++){
-        // bodies[i].print(normalise_val);
-        body_pointers[i]->print(normalise_val);
-    }
-    // visualise_bodies(bodies, normalise_val); 
-    #endif
-    #ifdef PRINT_POSITIONS_VISUAL
-    visualise_bodies(body_pointers, normalise_val, N); 
-    #endif
     double time = 0;
     std::vector <std::vector <std::pair<int,int> > > vec_of_times;
 
-    while (time<DAY){
+    while (time<WEEK){
         // First we compute the forces between all of the bodies
         // we delegate the work to the fill_force_matrix function
         // fill_force_matrix(force_matrix_x, force_matrix_y, body_pointers, 0,N, 0,N);
@@ -150,26 +139,7 @@ int main(int argc, char* argv[]){
             // std::cout<<"threads joined"<<std::endl; 
 
         }
-        // SumMapThread(start_block, end, f, results[num_threads - 1]);
-
-
-        #ifdef PRINT_FORCE_MATRIX
-        std::cout<<"---force matrix x:---"<<std::endl; 
-        for (int i = 0; i < N; i++){
-            for (int j = 0; j < N; j++){
-                std::cout << force_matrix_x[i][j] << " ";
-            }
-            std::cout << std::endl;
-        }
-        std::cout<<"---force matrix y:---"<<std::endl; 
-        for (int i = 0; i < N; i++){
-            for (int j = 0; j < N; j++){
-                std::cout << force_matrix_y[i][j] << " ";
-            }
-            std::cout << std::endl;
-        }
-        std::cout<<"------"<<std::endl; 
-        #endif
+  
         // Time to update the positions and velocities.
         std::vector<std::pair<int, int> > pos_at_time;
         for (int i = 0; i<N; i++){
@@ -186,42 +156,53 @@ int main(int argc, char* argv[]){
             B_i->apply_force(total_x_force, total_y_force, dt);
             // now we have sucessfully updated the position of B_i
 
-            
+            if (fmod(time, DAY) == 0) {
+                double new_x = body_pointers[i]->x/normalise_val * 380; 
+                double new_y = -body_pointers[i]->y/normalise_val * 380;
+                pos_at_time.push_back(std::make_pair(new_x, new_y));
+            }
         }
-        
+        if (fmod(time, DAY)==0) {
+            vec_of_times.push_back(pos_at_time);
+        }
         time += dt; // dt is defined as a macro on line 2
     }
-    #ifdef PRINT_POSITIONS
-    std::cout<<"Final positions:"<<std::endl; 
-    for (int i = 0; i<N; i++){
-        // bodies[i].print();
-        body_pointers[i]->print();
-    }
-    // visualise_bodies(bodies, normalise_val); 
-    #endif 
-    #ifdef PRINT_POSITIONS_VISUAL
-    visualise_bodies(body_pointers, normalise_val, N); 
-    #endif
 
-    #ifdef PRINT_FINAL_FORCE_MATRIX
-    std::cout<<"---force matrix x:---"<<std::endl; 
-    for (int i = 0; i < N; i++){
-        for (int j = 0; j < N; j++){
-            std::cout << force_matrix_x[i][j] << " ";
-        }
-        std::cout << std::endl;
-    }
-    std::cout<<"---force matrix y:---"<<std::endl; 
-    for (int i = 0; i < N; i++){
-        for (int j = 0; j < N; j++){
-            std::cout << std::setprecision(4) << force_matrix_y[i][j] << " ";
-        }
-        std::cout << std::endl;
-    }
-    std::cout<<"------"<<std::endl; 
-    #endif
-    
 
+
+
+    sf::RenderWindow window(sf::VideoMode(760, 760), "My window");
+	int t = 0;
+    while (t < vec_of_times.size()) // we want the number of time frames we visualize
+    {
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
+
+        window.clear(sf::Color::White);
+
+        // At this point, vec_of_bodies is full of all we are going to draw
+        
+        for (int i = 0; i < vec_of_times[0].size(); i++) { // N == vec_of_times[0].size() by the way
+            sf::CircleShape shape(3.f); // dot 
+            shape.setFillColor(sf::Color(0, 0, 0)); // black dot 
+            double x = vec_of_times[t][i].first;
+            double y = vec_of_times[t][i].second;
+            // cout<<x<<' '<<y<<endl;
+            shape.setPosition(x+380, y+380); 
+           
+            window.draw(shape); // we can draw a lot of shapes and not display them until all of the bodies have been drawn
+        }
+        
+        // now that all bodies for time t have been displayed, we can display the window
+        window.display();
+		// sleep(1); // sleeping so that it stays on the screen for at least a second, otherwise it goes by too fast
+        usleep(250000);
+		t++;
+    }
 
     return 0; 
 }

@@ -27,5 +27,8 @@ visualize: simulation_visualize.cpp
 threads: simulation_threads.cpp
 	$(CXX) $(CFLAGS) simulation_threads.cpp $(PATH1) -o simulation_threads $(PATH2) $(CFLAGS2)
 
+threadsvisualize: simulation_threads_visualize.cpp
+	$(CXX) $(CFLAGS) simulation_threads_visualize.cpp $(PATH1) -o simulation_threads_visualize $(PATH2) $(CFLAGS2)
+
 clean:
 	rm -f *.o
