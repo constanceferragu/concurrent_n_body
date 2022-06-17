@@ -30,7 +30,8 @@ int main(){
     double time  = 0;
 
     while (time <= max_time){
-
+        tree = new BH_Tree(box_dim, bodies);
+        tree->print_tree();
         std::cout<<"before:\n";
         for (int i = 0; i<N; i++){
             
