@@ -187,7 +187,6 @@ void compute_force_on_b_aux(Node* node, Body* b, double theta, double &F_x, doub
     // the forces acting on b 
     double Fx_temp;
     double Fy_temp;
-    std::cout<<node->total_mass<<"\n";
     if (node->external && node->contains_body){
         if (node->body == b){
             return;

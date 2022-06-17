@@ -9,14 +9,14 @@ int main(){
     int N = 8; 
 
     // create tree 
-    Body* b1 = new Body(0.1, 0.3, 1, 0, 0);
-    Body* b2 = new Body(0.1, 0.4, 2, 0, 0);
-    Body* b3 = new Body(0.6, 0.3, 3, 0, 0);
-    Body* b4 = new Body(0.6, 0.9, 4, 0, 0);
-    Body* b5 = new Body(0, 0.5, 5, 0, 0);
-    Body* b6 = new Body(0.9, 0.9, 6, 0, 0);
-    Body* b7 = new Body(0.55, 0.1, 7, 0, 0);
-    Body* b8 = new Body(0.93, 0.44, 8, 0, 0);
+    Body* b1 = new Body(0.1, 0.3, 1, 0.6, 0.3);
+    Body* b2 = new Body(0.1, 0.4, 2, 0.0, 0.9);
+    Body* b3 = new Body(0.6, 0.3, 3, 0.5, 0.0);
+    Body* b4 = new Body(0.6, 0.9, 4, -0.7, -0.5);
+    Body* b5 = new Body(0, 0.5, 5, -0.2, 0.0);
+    Body* b6 = new Body(0.9, 0.9, 6, 0.0, -0.9);
+    Body* b7 = new Body(0.55, 0.1, 7, 0.4, -0.3);
+    Body* b8 = new Body(0.93, 0.44, 8, 0.8, -0.2);
     std::vector<Body*> bodies{b1, b2, b3, b4, b5, b6, b7, b8};
     double box_dim[4] = {0,0,1,1};
     BH_Tree* tree = new BH_Tree(box_dim, bodies);
