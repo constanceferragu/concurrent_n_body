@@ -5,6 +5,7 @@
 
  int main(){
      Body *b_i, *b_j;
+     double F_x, F_y;
      // number of bodies 
      int N = 8; 
 
@@ -34,13 +35,14 @@
          for (int i = 0; i<N; i++){
              b_i = bodies[i]; 
              // compute force on this body 
-             double F_x, F_y;
+             F_x = 0.0;
+             F_y = 0.0;
              tree->compute_force_on_b(b_i, theta, F_x, F_y);
-
              force_matrix_x[i] = F_x;
              force_matrix_y[i] = F_y;
+             
          }
-
+         //std::cout << force_matrix_x;
          // update (x,y) coordinates 
          for (int i = 0; i<N; i++){
              bodies[i]->apply_force(force_matrix_x[i], force_matrix_y[i], dt);

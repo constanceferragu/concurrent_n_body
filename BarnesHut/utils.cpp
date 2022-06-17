@@ -60,7 +60,7 @@ double compare_ratio(Node* node, Body* b, double theta){
 
 void get_force_components_com(Node* node, Body* b, double &F_x, double &F_y){ 
     // Computes the force components for a Center of Mass 
-
+    
     double dist = pow( b->x - node->center_of_mass[0] , 2) 
                 + pow(b->y - node->center_of_mass[1] , 2);
     double magnitude = ((GRAVITY * b->mass * node->total_mass)/dist);

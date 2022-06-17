@@ -29,7 +29,7 @@ public:
 
 void BH_Tree::add_bodies(std::vector<Body*> bodies){
     // Adds a vector of bodies to the Barnes Hut Tree 
-
+    this->root->external = false;
     for (int k = 0; k < bodies.size(); k++){
         int quad = which_quadrant(bodies[k], root->box_dimensions);
         if (quad >= 10){
@@ -185,9 +185,9 @@ void BH_Tree::print_tree(){
 void compute_force_on_b_aux(Node* node, Body* b, double theta, double &F_x, double &F_y){
     // Auxiliary function for the recursive function that computes 
     // the forces acting on b 
-
     double Fx_temp;
     double Fy_temp;
+    std::cout<<node->total_mass<<"\n";
     if (node->external && node->contains_body){
         if (node->body == b){
             return;
@@ -202,7 +202,7 @@ void compute_force_on_b_aux(Node* node, Body* b, double theta, double &F_x, doub
     else if (!node->external){
         // internal 
         if (compare_ratio(node, b, theta)){
-            get_force_components_com(node, node->body, Fx_temp, Fy_temp);
+            get_force_components_com(node, b, Fx_temp, Fy_temp);
             F_x += Fx_temp;
             F_y += Fy_temp;
         }
