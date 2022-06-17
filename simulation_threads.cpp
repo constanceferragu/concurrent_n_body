@@ -4,9 +4,10 @@
 
 #include <vector>
 #include <unistd.h>
-#include <SFML/Graphics.hpp>
+// #include <SFML/Graphics.hpp>
 
 #define dt 1. // Let's say that dt, our time step, is 1 second
+#define HOUR 3600.
 #define DAY 86400. // Seconds in a day 
 #define WEEK 604800. // Seconds in a week
 #define MAX_TIME 604800. // Let's say that we want to simulate one month, or approx. 28 days
@@ -44,6 +45,8 @@ void fill_force_matrix(double **matrix_x,double **matrix_y, Body **bodies, int s
     return;
 }
 
+void do_nothing(){}; 
+
 int main(int argc, char* argv[]){
     
     if (argc < 3) {
@@ -77,18 +80,18 @@ int main(int argc, char* argv[]){
     std::vector<Body> bodies{earth,moon1,moon2,moon3};
     */
     
-    Body* earth = new Body(0, 0, 5.972e24, 0, 0); // Earth is not moving and in the center. Its mass is 80 times that of the moon
-    Body* moon1 = new Body(-3.844e8, 0, 7.348e22, 0., 1000.); // Moon's starting position is at (1,0), i.e. to the right of the earth. It has 0 x velocity and -12.8 y velocity
+    // Body* earth = new Body(0, 0, 5.972e24, 0, 0); // Earth is not moving and in the center. Its mass is 80 times that of the moon
+    // Body* moon1 = new Body(-3.844e8, 0, 7.348e22, 0., 1000.); // Moon's starting position is at (1,0), i.e. to the right of the earth. It has 0 x velocity and -12.8 y velocity
     // Body* moon2 = new Body(0, 3.844e8, 7.348e22, 1000.,  0.); // Moon's starting position is at (1,0), i.e. to the right of the earth. It has 0 x velocity and -12.8 y velocity
     // Body* moon3 = new Body(3.844e8, 0, 7.348e22, 0., -1000.); // Moon's starting position is at (1,0), i.e. to the right of the earth. It has 0 x velocity and -12.8 y velocity
-    earth->name = "E";
-    moon1->name = "1";
+    // earth->name = "E";
+    // moon1->name = "1";
     // moon2->name = "2";
     // moon3->name = "3";
     
     // std::vector<Body*> body_pointers{earth,moon1,moon2,moon3};
-    Body* body_pointers[] = {earth,moon1};
-    // Body** body_pointers = generate_random_bodies_pointers(N); 
+    // Body* body_pointers[] = {earth,moon1, moon2, moon3};
+    Body** body_pointers = generate_random_bodies_pointers(N); 
     Body *B_i; 
     std::vector<std::thread> workers(num_threads);
 
@@ -116,13 +119,13 @@ int main(int argc, char* argv[]){
     }
     // visualise_bodies(bodies, normalise_val); 
     #endif
-    // #ifdef PRINT_POSITIONS_VISUAL
-    // visualise_bodies(body_pointers, normalise_val, N); 
-    // #endiflsw
+    #ifdef PRINT_POSITIONS_VISUAL
+    visualise_bodies(body_pointers, normalise_val, N); 
+    #endif
     double time = 0;
     std::vector <std::vector <std::pair<int,int> > > vec_of_times;
 
-    while (time<WEEK){
+    while (time<DAY){
         // First we compute the forces between all of the bodies
         // we delegate the work to the fill_force_matrix function
         // fill_force_matrix(force_matrix_x, force_matrix_y, body_pointers, 0,N, 0,N);
@@ -133,6 +136,7 @@ int main(int argc, char* argv[]){
             // A  B  C
             // X  A  B
             // X  X  A
+            // std::cout<<"doing diagonal "<<diag_i<<std::endl; 
             for (int thread_i = 0; thread_i < num_threads; thread_i++) {
                 // for the diagonal, start_i=start_j and start_j = end_j
                 int start_i = thread_i*chunk_size + diag_i*chunk_size;
@@ -144,16 +148,19 @@ int main(int argc, char* argv[]){
                     workers[thread_i] = std::thread(&fill_force_matrix, force_matrix_x, force_matrix_y, body_pointers, start_i, end_i, start_j, end_j);
                 } else {
                     // we are outside the matrix - we do nothing
-                    workers[thread_i] = std::thread(&fill_force_matrix, force_matrix_x, force_matrix_y, body_pointers, 0, 0, 0, 0);
+                    // std::cout<<"useless thread"<<std::endl;
+                    workers[thread_i] = std::thread(&do_nothing);
+                    workers[thread_i].detach(); // we just get rid of the thread
                 }
             }
-            // Here we do the rest
-            int start_i_rest = N - rest;
-            int start_j_rest = N - rest;
 
             for (int thread_i = 0; thread_i < num_threads; ++thread_i) {
-                workers[thread_i].join();
+                if (workers[thread_i].joinable()){
+                    workers[thread_i].join();
+                }
             }
+            // std::cout<<"threads joined"<<std::endl; 
+
         }
         // SumMapThread(start_block, end, f, results[num_threads - 1]);
 
@@ -210,9 +217,9 @@ int main(int argc, char* argv[]){
     }
     // visualise_bodies(bodies, normalise_val); 
     #endif 
-    // #ifdef PRINT_POSITIONS_VISUAL
-    // visualise_bodies(body_pointers, normalise_val, N); 
-    // #endif
+    #ifdef PRINT_POSITIONS_VISUAL
+    visualise_bodies(body_pointers, normalise_val, N); 
+    #endif
 
     #ifdef PRINT_FINAL_FORCE_MATRIX
     std::cout<<"---force matrix x:---"<<std::endl; 
@@ -231,7 +238,7 @@ int main(int argc, char* argv[]){
     }
     std::cout<<"------"<<std::endl; 
     #endif
-
+    /*
     sf::RenderWindow window(sf::VideoMode(760, 760), "My window");
 	int t = 0;
     while (t < vec_of_times.size()) // we want the number of time frames we visualize
@@ -264,6 +271,7 @@ int main(int argc, char* argv[]){
         usleep(250000);
 		t++;
     }
+    */ 
 
 
     return 0; 

@@ -2,6 +2,7 @@
 #include <numeric>
 #include <iomanip>      // std::setprecision
 #define dt 1. // Let's say that dt, our time step, is 1 second
+#define HOUR 3600. // Seconds in a day 
 #define DAY 86400. // Seconds in a day 
 #define WEEK 604800. // Seconds in a week
 #define MAX_TIME 604800. // Let's say that we want to simulate one month, or approx. 28 days
@@ -12,12 +13,25 @@
 #define PRINT_POSITIONS_VISUAL
 // #define PRINT_BEFORE_AFTER_APPLY_FORCE
 
-int main(){
+int main(int argc, char* argv[]){
     Body *B_i, *B_j;
     // double force_ij; 
-    
-    int N = 4; // number of bodies
-    std::vector<Body> bodies = generate_random_bodies(N);
+    std::vector<Body> bodies; 
+    int N; 
+    if (argc < 2) {
+        std::cout << "Usage: ./simulation num_bodies" << std::endl;
+        std::cout << "No arguments provided, using earth moon system" << std::endl;
+        N = 2; // number of bodies
+        bodies = generate_earth_moon();
+    } else {
+        N = std::stoi(argv[1]); // Num bodies 
+        std::cout << "Generating a random system of "<<N<<" bodies" << std::endl;
+        bodies = generate_random_bodies(N);
+    }
+    if (N<1){
+        std::cout << "Must have at least 1 body" << std::endl;
+        return 0;
+    }
     double max_dist = 0.;
     for (size_t i =0; i<bodies.size(); i++){
         if (dist_to_center(&bodies[i])>max_dist){
@@ -25,7 +39,6 @@ int main(){
         }
     }
     std::cout<<"max distance is: "<<max_dist<<std::endl; 
-    // std::vector<Body> bodies = generate_earth_moon();
 
     // =================
     // This part is only for the visualisation function, to fit all the bodies on the same screen
