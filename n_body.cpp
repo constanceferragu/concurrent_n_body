@@ -25,8 +25,7 @@ public:
     double mass; //kg
     double initial_v_x;
     double initial_v_y; //velocity magnitude in m/s
-    // std::mutex lock; //commented because was giving me bugs
-    std::string name; // Just for visualisation, can be removed later
+    std::string name;
     Body(){
         this->x = 0.0;
         this->y = 0.0;
@@ -45,9 +44,6 @@ public:
         this->name = "B";
     };
     ~Body(); 
-    // I think it makes more sense to have the get_force function
-    //    a standalone function. - Siggi
-    // double get_force(Body* b_1, Body* b_2);
     void print(int boundary);
     void apply_force(double x_force, double y_force, double dt);
 };
@@ -202,20 +198,13 @@ void get_force_components(Body* b_1, Body* b_2, double &F_x, double &F_y){
 }
 
 
-// maybe
-// double get_force_x(Body* b_1, Body* b_2){
-    
-
-// }
-
-// double get_force_y(Body* b_1, Body* b_2){
-
-
-// }
-
-
 // printing
 void visualise_bodies(std::vector<Body> bodies, double normalise_val, int b_size=0){
+    // Function that prints on the terminal a rudimentary visualisation of the bodies.
+    // it inpputs a vector of bodies and a normalise value which is greater than the
+    // greatest between the center (0,0) and a body in the bodies vector. 
+    // we then normalise the coordinates with this value, making them be in [-1,1], then
+    // we multiply them to an integer in [-10,-10] so that we can display the bodies. 
     std::vector<int> xcoords, ycoords; 
     for (size_t i=0; i<bodies.size(); i++){
         // bodies[i].x is in [-X_max,X_max], we want it rounded to an integer in [-10, 10]
@@ -291,6 +280,7 @@ void visualise_bodies(std::vector<Body> bodies, double normalise_val, int b_size
 }
 
 void visualise_bodies(Body** bodies, double normalise_val, size_t b_size=0){
+    // Same function as above but made to work with an array of bodies, i.e. body**.
     std::vector<int> xcoords, ycoords; 
     for (size_t i=0; i<b_size; i++){
         // bodies[i].x is in [-X_max,X_max], we want it rounded to an integer in [-10, 10]
