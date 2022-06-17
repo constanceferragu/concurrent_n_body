@@ -1,7 +1,5 @@
 # concurrent_n_body
 
-Hello everyone!
-
 Here are a few instructions on the files, what they do and how to run them.
 
 
@@ -18,6 +16,11 @@ Here are a few instructions on the files, what they do and how to run them.
   To run it, do: 
   - make
   - ./simulation 
+  - ./simulation N, where N is the number of random bodies to generate. 
+
+If it is run without arguments, it will simulate the Earth-Moon system which we used extensively to debug, and is quite satisfying to see work. Automatically the simulation runs only for one day, which in the case of earth and moon is not so interesting. Instead, changing the line 77 to be "while(time<WEEK)" you can simulate one week. To do one month, do "while(time<4*WEEK)". The program will print the start position and end position of the bodies on the console. To see a graphical visualisation, refer to the simulation_visualise file. 
+
+It can also be run with an argument N, where N is the number of random bodies you want to simulate.
   
  
  
