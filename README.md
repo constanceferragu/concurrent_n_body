@@ -32,7 +32,9 @@ Here are a few instructions on the files, what they do and how to run them.
   Then do:
   - make visualize
   - ./simulation_visualize.cpp
-
+  
+  - In the beginning of the file there are two blocks of code, one commented and the other not. You can run the file twice for two examples by uncommenting random bodies and commenting eart moon.
+ 
 
 
 ### simulation_threads.cpp
@@ -45,6 +47,16 @@ Here are a few instructions on the files, what they do and how to run them.
   Then do:
   - make threads
   - ./simulation_threads.cpp
+  
+  
+
+## Screen Recording
+  You can watch the videos to check that the code runs well for us. 
+  - Thread_free_earth_moon.mp4 is a simulation for the file simulation_visualize.cpp with two bodies: the Earth and the moon
+  - Thread_free_random_Bodies.mp4 is a simulation for the file simulation_visualize.cpp with 20 random bodies. Note that it takes some time to run
+  - Threads_free_earth_moon.mp4 is a simulation for the file simulation_threads.cpp with two bodies: the Earth and the moon
+  - Threads_random_bodies.mp4 is a simulation for the file simulation_threads.cpp with 3 random bodies and 2 threads. 
+
   
 
 
