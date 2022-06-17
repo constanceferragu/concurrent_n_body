@@ -34,13 +34,33 @@ It can also be run with an argument N, where N is the number of random bodies yo
   - change the variable PATH2 from PATH2 = -L/usr/local/Cellar/sfml/2.5.1_1/lib/ to PATH2= -L/YOUR_PATH/lib/
   Then do:
   - make visualize
-  - ./simulation_visualize.cpp
+  - ./simulation_visualize
   
   - In the beginning of the file there are two blocks of code, one commented and the other not. You can run the file twice for two examples by uncommenting random bodies and commenting eart moon.
  
 
 
 ### simulation_threads.cpp
+the file simulation_threads.cpp has the parallel version of the algorithm. Build it with the command 'make threads'. It will create the file ./simulation_threads which can be run with arguments num_bodies and num_threads. 
+
+There is a catch though, the num_bodies has to be an even number and it has to be divisible by num_threads. This is due to a problem in the implementation where we divide the tasks evenly among the threads, and if the last block is larger than the rest we have issues. 
+
+A good working example would be ".\simulation_threads 4 2" but  ".\simulation_threads 9 2" will not work properly. 
+
+In order to run the parallel algorithm with an earth moon system, uncomment the lines in simulation_threads.cpp saying ' TO RUN WITH EARTH MOON SIMULATION (3 MOONS ACTUALLY) UNCOMMENT THESE LINES'
+
+  To run:
+  - make threads
+  - ./simulation_threads num_bodies
+
+
+
+
+
+
+
+### simulation_threads_visualize.cpp
+
   That is the file containing the algorithm with threads and its visualization using SFML.
   To run it, you need to: 
   - go into the makefile
@@ -48,8 +68,8 @@ It can also be run with an argument N, where N is the number of random bodies yo
     where YOUR_PATH is the path where SFML is installed on your computer (for me it is YOUR_PATH = usr/local/Cellar/sfml/2.5.1_1)
   - change the variable PATH2 from PATH2 = -L/usr/local/Cellar/sfml/2.5.1_1/lib/ to PATH2= -L/YOUR_PATH/lib/
   Then do:
-  - make threads
-  - ./simulation_threads.cpp
+  - make threadsvisualize
+  - ./simulation_threads_visualize
   
   
 
